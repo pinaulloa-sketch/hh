@@ -1,7 +1,7 @@
 // Quiniela Progol 14 Partidos + Revancha (Actualizado Abril 2026)
 
 // 1. Principal - 14 Partidos
-export const progol_principal = [
+const progol_principal = [
     {
         "casillero": 1,
         "torneo": "Liga MX - Clausura 2026",
@@ -383,7 +383,7 @@ export const progol_principal = [
 ];
 
 // 2. Revancha - 7 Partidos
-export const progol_revancha = [
+const progol_revancha = [
     {
         "casillero": 1,
         "torneo": "LaLiga",

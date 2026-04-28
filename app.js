@@ -105,21 +105,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 // INTEGRACIÓN QUINIELA PROGOL MÚLTIPLE
 // ================================================================
 function initProgolIntegration() {
-  // Procesar cada arreglo de datos (asegúrate de que existan globalmente)
-  if (typeof progol_media_semana !== 'undefined') procesarYRenderizar(progol_media_semana, 'progol-grid-ms');
+  // Leer las variables que vienen de progol_ms_analisis_abril2026.js y progol_completo_abril2026.js
+  if (typeof progol_ms_analisis !== 'undefined') procesarYRenderizar(progol_ms_analisis, 'progol-grid-ms');
   if (typeof progol_principal !== 'undefined') procesarYRenderizar(progol_principal, 'progol-grid-principal');
   if (typeof progol_revancha !== 'undefined') procesarYRenderizar(progol_revancha, 'progol-grid-revancha');
 
-  // Actualizar los selectores principales con todos los equipos inyectados
+  // Actualizar los dropdowns con los equipos nuevos
   populateDropdowns(TEAMS);
 }
 
 function procesarYRenderizar(arrayDatos, containerId) {
-  // 1. Inyectar los equipos al simulador predictivo (TEAMS)
+  // Inyectar datos al simulador predictivo
   arrayDatos.forEach(match => {
     [match.local, match.visitante].forEach(t => {
       if (!TEAMS[t.equipo]) {
-        // Datos simulados por defecto para el motor predictivo si la API no los tiene
         const pj = 15, g = 6, e = 4, p = 5, gf = 18, gc = 15;
         TEAMS[t.equipo] = {
           league: t.liga || "Progol", 
@@ -138,7 +137,7 @@ function procesarYRenderizar(arrayDatos, containerId) {
     });
   });
 
-  // 2. Renderizar las tarjetas visuales de los partidos
+  // Renderizar las tarjetas
   const grid = document.getElementById(containerId);
   if (grid) {
     grid.innerHTML = arrayDatos.map(p => `
@@ -155,7 +154,7 @@ window.loadProgolMatch = function(homeTeam, awayTeam) {
   awaySelect.value = awayTeam; 
   runPrediction();
 
-  // Alertas visuales dinámicas al renderizar el partido
+  // Inyectar alertas dinámicas
   setTimeout(() => {
     const factorsList = document.getElementById('factors-list');
     const hData = TEAMS[homeTeam].progolData;
