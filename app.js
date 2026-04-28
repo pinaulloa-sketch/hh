@@ -1,19 +1,19 @@
 // ================================================================
-// 1. BASES DE DATOS PROGOL (INTEGRADAS PARA EVITAR ERRORES DE CARGA)
+// 1. BASES DE DATOS PROGOL BLINDADAS (Nombres únicos para evitar bloqueos)
 // ================================================================
-const progol_ms_analisis = [
-    { "casillero": 1, "torneo": "Concacaf Champions Cup", "local": { "equipo": "Nashville SC", "liga": "MLS" }, "visitante": { "equipo": "Tigres UANL", "liga": "Liga MX" }, "pronostico_estadistico": "Local (L) o Empate (E)" },
+const db_progol_ms = [
+    { "casillero": 1, "torneo": "Concacaf Champions", "local": { "equipo": "Nashville SC", "liga": "MLS" }, "visitante": { "equipo": "Tigres UANL", "liga": "Liga MX" }, "pronostico_estadistico": "Local (L) o Empate (E)" },
     { "casillero": 2, "torneo": "Amistoso", "local": { "equipo": "Los Angeles FC", "liga": "MLS" }, "visitante": { "equipo": "Toluca", "liga": "Liga MX" }, "pronostico_estadistico": "Local (L)" },
     { "casillero": 3, "torneo": "Champions League", "local": { "equipo": "Paris SG", "liga": "Ligue 1" }, "visitante": { "equipo": "Bayern Munich", "liga": "Bundesliga" }, "pronostico_estadistico": "Empate (E) o Visita (V)" },
-    { "casillero": 4, "torneo": "Competición Europea", "local": { "equipo": "Atlético de Madrid", "liga": "LaLiga" }, "visitante": { "equipo": "Arsenal", "liga": "Premier League" }, "pronostico_estadistico": "Empate (E)" },
-    { "casillero": 5, "torneo": "Competición Europea", "local": { "equipo": "SC Braga", "liga": "Primeira Liga" }, "visitante": { "equipo": "Friburgo", "liga": "Bundesliga" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 4, "torneo": "Europa League", "local": { "equipo": "Atlético de Madrid", "liga": "LaLiga" }, "visitante": { "equipo": "Arsenal", "liga": "Premier League" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 5, "torneo": "Europa League", "local": { "equipo": "SC Braga", "liga": "Primeira Liga" }, "visitante": { "equipo": "Friburgo", "liga": "Bundesliga" }, "pronostico_estadistico": "Local (L)" },
     { "casillero": 6, "torneo": "Premier League", "local": { "equipo": "Nottingham", "liga": "Premier League" }, "visitante": { "equipo": "Aston Villa", "liga": "Premier League" }, "pronostico_estadistico": "Visita (V)" },
     { "casillero": 7, "torneo": "Amistoso", "local": { "equipo": "Rayo Vallecano", "liga": "LaLiga" }, "visitante": { "equipo": "Estrasburgo", "liga": "Ligue 1" }, "pronostico_estadistico": "Empate (E)" },
     { "casillero": 8, "torneo": "Amistoso", "local": { "equipo": "Shakhtar", "liga": "Ucrania" }, "visitante": { "equipo": "Crystal Palace", "liga": "Premier League" }, "pronostico_estadistico": "Local (L)" },
     { "casillero": 9, "torneo": "Copa Sudamericana", "local": { "equipo": "Cruzeiro", "liga": "Brasileirão" }, "visitante": { "equipo": "Boca Juniors", "liga": "Argentina" }, "pronostico_estadistico": "Empate (E)" }
 ];
 
-const progol_principal = [
+const db_progol_pr = [
     { "casillero": 1, "torneo": "Liga MX", "local": { "equipo": "América" }, "visitante": { "equipo": "Pumas UNAM" }, "pronostico_estadistico": "Empate (E) o Visita (V)" },
     { "casillero": 2, "torneo": "Liga MX", "local": { "equipo": "Tigres UANL" }, "visitante": { "equipo": "Guadalajara" }, "pronostico_estadistico": "Empate (E)" },
     { "casillero": 3, "torneo": "Liga MX", "local": { "equipo": "Atlas" }, "visitante": { "equipo": "Cruz Azul" }, "pronostico_estadistico": "Visita (V)" },
@@ -30,7 +30,7 @@ const progol_principal = [
     { "casillero": 14, "torneo": "Grecia", "local": { "equipo": "PAOK" }, "visitante": { "equipo": "Olympiacos" }, "pronostico_estadistico": "Local (L)" }
 ];
 
-const progol_revancha = [
+const db_progol_rev = [
     { "casillero": 1, "torneo": "LaLiga", "local": { "equipo": "Alavés" }, "visitante": { "equipo": "Athletic Bilbao" }, "pronostico_estadistico": "Visita (V)" },
     { "casillero": 2, "torneo": "Bundesliga", "local": { "equipo": "Werder Bremen" }, "visitante": { "equipo": "Augsburgo" }, "pronostico_estadistico": "Empate (E)" },
     { "casillero": 3, "torneo": "Bundesliga", "local": { "equipo": "Union Berlin" }, "visitante": { "equipo": "Colonia" }, "pronostico_estadistico": "Local (L)" },
@@ -50,10 +50,11 @@ const leagueFilter = document.getElementById('league-filter');
 
 const LEAGUES_TO_LOAD = { "Premier League": 39, "La Liga": 140, "Bundesliga": 78, "Serie A": 135, "Ligue 1": 61, "Liga MX": 262, "MLS": 253, "Brasileirão": 71, "Argentine Primera": 128, "Champions League": 2, "Copa Libertadores": 13 };
 
-function showStatus(msg, type = "info") { statusText.textContent = msg; statusBanner.className = `status-banner ${type}`; statusBanner.style.display = "flex"; }
-function hideStatus() { statusBanner.style.display = "none"; }
+function showStatus(msg, type = "info") { if(statusText) statusText.textContent = msg; if(statusBanner) { statusBanner.className = `status-banner ${type}`; statusBanner.style.display = "flex"; } }
+function hideStatus() { if(statusBanner) statusBanner.style.display = "none"; }
 
 function populateDropdowns(teamsObj) {
+  if(!leagueFilter || !homeSelect || !awaySelect) return;
   const grouped = {};
   Object.entries(teamsObj).forEach(([name, t]) => { const lg = t.league || "Other"; if (!grouped[lg]) grouped[lg] = []; grouped[lg].push(name); });
   leagueFilter.innerHTML = '<option value="">All Leagues</option>';
@@ -63,6 +64,7 @@ function populateDropdowns(teamsObj) {
 
 function buildSelectOptions(grouped, filterLeague) {
   [homeSelect, awaySelect].forEach(sel => {
+    if(!sel) return;
     const prev = sel.value; sel.innerHTML = ""; const keys = filterLeague ? [filterLeague] : Object.keys(grouped).sort();
     keys.forEach(lg => {
       if (!grouped[lg]) return; const grp = document.createElement("optgroup"); grp.label = lg;
@@ -73,10 +75,12 @@ function buildSelectOptions(grouped, filterLeague) {
   });
 }
 
-leagueFilter.addEventListener("change", () => {
-  const grouped = {}; Object.entries(TEAMS).forEach(([name, t]) => { const lg = t.league || "Other"; if (!grouped[lg]) grouped[lg] = []; grouped[lg].push(name); });
-  buildSelectOptions(grouped, leagueFilter.value);
-});
+if(leagueFilter) {
+  leagueFilter.addEventListener("change", () => {
+    const grouped = {}; Object.entries(TEAMS).forEach(([name, t]) => { const lg = t.league || "Other"; if (!grouped[lg]) grouped[lg] = []; grouped[lg].push(name); });
+    buildSelectOptions(grouped, leagueFilter.value);
+  });
+}
 
 function getCurrentWeights() {
   const w = {}; document.querySelectorAll('.weight-slider').forEach(s => w[s.dataset.key] = parseFloat(s.value));
@@ -84,11 +88,13 @@ function getCurrentWeights() {
 }
 
 function renderForm(lastFive) { return lastFive.map(r => `<span class="form-pill ${r}">${r}</span>`).join(''); }
-function animateBar(el, pct) { el.style.width = "0%"; setTimeout(() => { el.style.width = pct + "%"; }, 80); }
+function animateBar(el, pct) { if(!el) return; el.style.width = "0%"; setTimeout(() => { el.style.width = pct + "%"; }, 80); }
 
 function renderTeamStats(teamName, containerId, isHome) {
-  const t = TEAMS[teamName], hg = t.homeWon + t.homeDrawn + t.homeLost, ag = t.awayWon + t.awayDrawn + t.awayLost;
-  document.getElementById(containerId).innerHTML = `
+  const t = TEAMS[teamName]; if(!t) return;
+  const hg = t.homeWon + t.homeDrawn + t.homeLost, ag = t.awayWon + t.awayDrawn + t.awayLost;
+  const el = document.getElementById(containerId); if(!el) return;
+  el.innerHTML = `
     <div class="stat-card-title" style="color:${isHome ? "var(--home-color)" : "var(--away-color)"}">${t.apiLogo ? `<img src="${t.apiLogo}" style="width:22px;height:22px;object-fit:contain;margin-right:6px;vertical-align:middle" onerror="this.style.display='none'"/>` : ""}${isHome ? "🏠 HOME" : "✈️ AWAY"} · ${teamName}</div>
     <div class="stat-row"><span class="stat-key">Season Record</span><span class="stat-val">${t.won}W / ${t.drawn}D / ${t.lost}L</span></div>
     <div class="stat-row"><span class="stat-key">League / Position</span><span class="stat-val">${t.league} #${t.position}</span></div>
@@ -101,73 +107,99 @@ function renderTeamStats(teamName, containerId, isHome) {
 }
 
 function renderComponentBars(comp, hName, aName) {
-  document.getElementById('component-bars').innerHTML = `<div style="display:grid;grid-template-columns:90px 1fr 1fr;gap:.5rem;margin-bottom:.75rem;font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase"><div></div><div style="text-align:right;color:var(--home-color)">${hName}</div><div style="color:var(--away-color)">${aName}</div></div>` + `<div class="component-bars">` + [ {key:"form",label:"Form"},{key:"attack",label:"Attack"},{key:"defense",label:"Defense"},{key:"homeAdv",label:"Home/Away"},{key:"h2h",label:"H2H"},{key:"position",label:"Position"} ].map(({key,label}) => `<div class="component-bar-row"><span class="comp-label">${label}</span><div class="comp-bar-wrap" style="flex-direction:row-reverse"><span class="comp-score home-score">${(comp.home[key]*100).toFixed(0)}%</span><div class="comp-bar-track"><div class="comp-bar-fill home-fill" style="width:${(comp.home[key]*100).toFixed(0)}%"></div></div></div><div class="comp-bar-wrap"><div class="comp-bar-track"><div class="comp-bar-fill away-fill" style="width:${(comp.away[key]*100).toFixed(0)}%"></div></div><span class="comp-score away-score">${(comp.away[key]*100).toFixed(0)}%</span></div></div>`).join('') + `</div>`;
+  const el = document.getElementById('component-bars'); if(!el) return;
+  el.innerHTML = `<div style="display:grid;grid-template-columns:90px 1fr 1fr;gap:.5rem;margin-bottom:.75rem;font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase"><div></div><div style="text-align:right;color:var(--home-color)">${hName}</div><div style="color:var(--away-color)">${aName}</div></div>` + `<div class="component-bars">` + [ {key:"form",label:"Form"},{key:"attack",label:"Attack"},{key:"defense",label:"Defense"},{key:"homeAdv",label:"Home/Away"},{key:"h2h",label:"H2H"},{key:"position",label:"Position"} ].map(({key,label}) => `<div class="component-bar-row"><span class="comp-label">${label}</span><div class="comp-bar-wrap" style="flex-direction:row-reverse"><span class="comp-score home-score">${(comp.home[key]*100).toFixed(0)}%</span><div class="comp-bar-track"><div class="comp-bar-fill home-fill" style="width:${(comp.home[key]*100).toFixed(0)}%"></div></div></div><div class="comp-bar-wrap"><div class="comp-bar-track"><div class="comp-bar-fill away-fill" style="width:${(comp.away[key]*100).toFixed(0)}%"></div></div><span class="comp-score away-score">${(comp.away[key]*100).toFixed(0)}%</span></div></div>`).join('') + `</div>`;
 }
 
 async function renderH2H(homeTeam, awayTeam) {
-  const wrap = document.getElementById('h2h-table-wrap'); wrap.innerHTML = `<div class="no-data">⏳ Loading H2H data…</div>`;
-  let matches = []; try { matches = await loadH2HForMatch(homeTeam, awayTeam); } catch(e) {}
-  if (!matches.length) matches = getH2HMatches(homeTeam, awayTeam);
+  const wrap = document.getElementById('h2h-table-wrap'); if(!wrap) return;
+  wrap.innerHTML = `<div class="no-data">⏳ Loading H2H data…</div>`;
+  let matches = [];
+  try { if (typeof loadH2HForMatch !== 'undefined') matches = await loadH2HForMatch(homeTeam, awayTeam); } catch(e) {}
+  if (!matches.length && typeof getH2HMatches !== 'undefined') matches = getH2HMatches(homeTeam, awayTeam);
   if (!matches.length) { wrap.innerHTML = `<div class="no-data">⚠️ No head-to-head matches found.</div>`; return; }
   wrap.innerHTML = `<table class="h2h-table"><thead><tr><th>Date</th><th>Home</th><th>Score</th><th>Away</th><th>Result</th></tr></thead><tbody>${matches.map(m => { const hw = m.hg > m.ag, aw = m.hg < m.ag, dw = m.hg === m.ag; return `<tr><td>${m.date}</td><td>${m.home}</td><td class="score-cell">${m.hg} – ${m.ag}</td><td>${m.away}</td><td class="${dw ? "result-draw" : (m.home === homeTeam && hw) || (m.home === awayTeam && aw) ? "result-home" : "result-away"}">${dw ? "Draw" : (m.home === homeTeam && hw) || (m.home === awayTeam && aw) ? homeTeam+" Win" : awayTeam+" Win"}</td></tr>`; }).join('')}</tbody></table>`;
 }
 
 async function runPrediction() {
+  if(!homeSelect || !awaySelect) return;
   const homeTeam = homeSelect.value, awayTeam = awaySelect.value;
   if (!homeTeam || !awayTeam || homeTeam === awayTeam) { alert('Please select two different teams.'); return; }
-  showStatus("🔄 Fetching live form data…", "info"); try { await Promise.all([enrichTeamForm(homeTeam), enrichTeamForm(awayTeam)]); } catch(e) {} hideStatus();
+  showStatus("🔄 Fetching live form data…", "info");
+  try { if (typeof enrichTeamForm !== 'undefined') await Promise.all([enrichTeamForm(homeTeam), enrichTeamForm(awayTeam)]); } catch(e) {} hideStatus();
   let result; try { result = predictMatch(homeTeam, awayTeam, getCurrentWeights()); } catch(e) { alert('Prediction error: ' + e.message); return; }
 
-  resultsSection.classList.remove('visible'); void resultsSection.offsetWidth; resultsSection.classList.add('visible');
+  if(resultsSection) { resultsSection.classList.remove('visible'); void resultsSection.offsetWidth; resultsSection.classList.add('visible'); }
   document.getElementById('match-home-name').textContent = homeTeam; document.getElementById('match-away-name').textContent = awayTeam;
-  ['home', 'draw', 'away'].forEach(type => document.getElementById(`badge-${type}-val`).textContent = result[type === 'home' ? 'homeWin' : type === 'away' ? 'awayWin' : 'draw'] + '%');
-  const chip = document.getElementById('confidence-chip'); chip.className = `confidence-chip ${result.confidence.toLowerCase()}`; chip.innerHTML = `${{High:'🟢',Medium:'🟡',Low:'🔴'}[result.confidence]} Confidence: ${result.confidence}`;
+  ['home', 'draw', 'away'].forEach(type => {
+    const el = document.getElementById(`badge-${type}-val`);
+    if(el) el.textContent = result[type === 'home' ? 'homeWin' : type === 'away' ? 'awayWin' : 'draw'] + '%';
+  });
+  const chip = document.getElementById('confidence-chip');
+  if(chip) { chip.className = `confidence-chip ${result.confidence.toLowerCase()}`; chip.innerHTML = `${{High:'🟢',Medium:'🟡',Low:'🔴'}[result.confidence]} Confidence: ${result.confidence}`; }
 
-  ['home', 'draw', 'away'].forEach(type => { const val = result[type === 'home' ? 'homeWin' : type === 'away' ? 'awayWin' : 'draw']; animateBar(document.getElementById(`bar-${type}`), val); document.getElementById(`val-${type}`).textContent = val + '%'; });
+  ['home', 'draw', 'away'].forEach(type => {
+    const val = result[type === 'home' ? 'homeWin' : type === 'away' ? 'awayWin' : 'draw'];
+    animateBar(document.getElementById(`bar-${type}`), val);
+    const vEl = document.getElementById(`val-${type}`); if(vEl) vEl.textContent = val + '%';
+  });
   document.getElementById('bar-label-home').textContent = homeTeam + ' Win'; document.getElementById('bar-label-away').textContent = awayTeam + ' Win';
   renderTeamStats(homeTeam, 'home-stats-content', true); renderTeamStats(awayTeam, 'away-stats-content', false);
-  document.getElementById('factors-list').innerHTML = result.factors.map(f => `<div class="factor-item">${f}</div>`).join('');
+  const factorsEl = document.getElementById('factors-list'); if(factorsEl) factorsEl.innerHTML = result.factors.map(f => `<div class="factor-item">${f}</div>`).join('');
   renderComponentBars(result.components, homeTeam, awayTeam); renderH2H(homeTeam, awayTeam);
-  resultsSection.scrollIntoView({ behavior:'smooth', block:'start' });
+  if(resultsSection) resultsSection.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 // ================================================================
-// 3. INICIALIZACIÓN (AQUÍ DIBUJAMOS LOS PANELES)
+// 3. INICIALIZACIÓN A PRUEBA DE FALLOS
 // ================================================================
 document.addEventListener('DOMContentLoaded', async () => {
-  document.querySelectorAll('.weight-slider').forEach(s => s.addEventListener('input', () => document.getElementById(`w-val-${s.dataset.key}`).textContent = parseFloat(s.value).toFixed(2)));
-  
-  // DIBUJAR PANELES DE PROGOL INMEDIATAMENTE
-  initProgolIntegration();
+  document.querySelectorAll('.weight-slider').forEach(s => s.addEventListener('input', () => {
+    const v = document.getElementById(`w-val-${s.dataset.key}`);
+    if(v) v.textContent = parseFloat(s.value).toFixed(2);
+  }));
 
-  predictBtn.addEventListener('click', runPrediction);
-  [homeSelect, awaySelect].forEach(sel => sel.addEventListener('change', () => { if (resultsSection.classList.contains('visible')) runPrediction(); }));
-  
+  // DIBUJAR PANELES DE PROGOL INMEDIATAMENTE
+  try {
+    initProgolIntegration();
+  } catch(e) {
+    console.error("Error al renderizar Progol:", e);
+  }
+
+  if(predictBtn) predictBtn.addEventListener('click', runPrediction);
+  [homeSelect, awaySelect].forEach(sel => {
+    if(sel) sel.addEventListener('change', () => { if (resultsSection && resultsSection.classList.contains('visible')) runPrediction(); });
+  });
+
   showStatus("🌐 Loading live data from API…", "info");
   try {
-    const live = await loadLiveData(LEAGUES_TO_LOAD, msg => showStatus("🌐 " + msg, "info"));
-    Object.assign(TEAMS, live.teams); populateDropdowns(TEAMS);
-    if (Object.keys(live.teams).length > 0) { showStatus(`✅ Live data loaded — ${Object.keys(live.teams).length} teams updated`, "success"); setTimeout(hideStatus, 4000); }
-    else { showStatus("⚠️ API returned no data — using local dataset", "warn"); setTimeout(hideStatus, 5000); }
+    if (typeof loadLiveData !== 'undefined') {
+      const live = await loadLiveData(LEAGUES_TO_LOAD, msg => showStatus("🌐 " + msg, "info"));
+      if(typeof TEAMS !== 'undefined') Object.assign(TEAMS, live.teams);
+      populateDropdowns(TEAMS);
+      if (Object.keys(live.teams).length > 0) { showStatus(`✅ Live data loaded — ${Object.keys(live.teams).length} teams updated`, "success"); setTimeout(hideStatus, 4000); }
+      else { showStatus("⚠️ API returned no data — using local dataset", "warn"); setTimeout(hideStatus, 5000); }
+    }
   } catch(e) { showStatus("⚠️ API unavailable — using local dataset", "warn"); setTimeout(hideStatus, 5000); }
 });
 
 function initProgolIntegration() {
-  procesarYRenderizar(progol_ms_analisis, 'progol-grid-ms');
-  procesarYRenderizar(progol_principal, 'progol-grid-principal');
-  procesarYRenderizar(progol_revancha, 'progol-grid-revancha');
-  populateDropdowns(TEAMS);
+  procesarYRenderizar(db_progol_ms, 'progol-grid-ms');
+  procesarYRenderizar(db_progol_pr, 'progol-grid-principal');
+  procesarYRenderizar(db_progol_rev, 'progol-grid-revancha');
+  if (typeof TEAMS !== 'undefined') populateDropdowns(TEAMS);
 }
 
 function procesarYRenderizar(arrayDatos, containerId) {
-  // Inyectar equipos a TEAMS para que el motor matemático los lea
+  if (typeof TEAMS === 'undefined') window.TEAMS = {};
+
   arrayDatos.forEach(match => {
     [match.local, match.visitante].forEach(t => {
       if (!TEAMS[t.equipo]) {
         const pj = 15, g = 6, e = 4, p = 5, gf = 18, gc = 15;
         TEAMS[t.equipo] = {
-          league: t.liga || match.torneo || "Progol", 
-          position: t.posicion_actual || t.posicion || 10, 
+          league: t.liga || match.torneo || "Progol",
+          position: t.posicion_actual || t.posicion || 10,
           played: pj, won: g, drawn: e, lost: p, goalsFor: gf, goalsAgainst: gc,
           homeWon: 4, homeDrawn: 2, homeLost: 1, awayWon: 2, awayDrawn: 2, awayLost: 4,
           lastFive: ['W','D','L','W','D'],
@@ -179,7 +211,6 @@ function procesarYRenderizar(arrayDatos, containerId) {
     });
   });
 
-  // Renderizar las tarjetas visuales
   const grid = document.getElementById(containerId);
   if (grid) {
     grid.innerHTML = arrayDatos.map(p => `
@@ -192,10 +223,11 @@ function procesarYRenderizar(arrayDatos, containerId) {
 }
 
 window.loadProgolMatch = function(homeTeam, awayTeam) {
-  leagueFilter.value = "";
-  leagueFilter.dispatchEvent(new Event('change'));
-
-  homeSelect.value = homeTeam; 
-  awaySelect.value = awayTeam; 
+  if(leagueFilter) {
+    leagueFilter.value = "";
+    leagueFilter.dispatchEvent(new Event('change'));
+  }
+  if(homeSelect) homeSelect.value = homeTeam;
+  if(awaySelect) awaySelect.value = awayTeam;
   runPrediction();
 };
