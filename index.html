@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚽ FootballIQ — Live Match Prediction Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="header">
+  <div class="header-brand">
+    <div class="header-icon">⚽</div>
+    <div><div class="header-title">FootballIQ</div><div class="header-subtitle">Match Prediction Engine</div></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1rem"><div class="header-badge" id="api-badge">● Live API</div></div>
+</header>
+
+<div id="status-banner" class="status-banner" style="display:none"><span id="status-text">Loading…</span></div>
+
+<main class="main">
+  <!-- ── PANELES QUINIELA PROGOL ───────────────────── -->
+  <p class="section-title">📋 Quiniela Progol Media Semana (9 Partidos)</p>
+  <div class="card full-col" style="margin-bottom:2rem; border-color: rgba(0, 194, 255, 0.3);">
+    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom: 1rem;">
+      Haz clic en cualquier partido para cargarlo automáticamente en el motor de simulación.
+    </p>
+    <div id="progol-grid-ms" class="progol-grid"></div>
+  </div>
+
+  <p class="section-title">📋 Quiniela Progol Principal (14 Partidos)</p>
+  <div class="card full-col" style="margin-bottom:2rem; border-color: rgba(0, 194, 255, 0.3);">
+    <div id="progol-grid-principal" class="progol-grid"></div>
+  </div>
+
+  <p class="section-title">📋 Quiniela Progol Revancha (7 Partidos)</p>
+  <div class="card full-col" style="margin-bottom:2rem; border-color: rgba(0, 194, 255, 0.3);">
+    <div id="progol-grid-revancha" class="progol-grid"></div>
+  </div>
+
+  <p class="section-title">⚙️ Match Setup</p>
+  <div style="margin-bottom:1rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+    <label style="font-size:.75rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted)">🏆 Filter by League:</label>
+    <select id="league-filter" class="team-select" style="max-width:260px;padding:.5rem 2.5rem .5rem 1rem"><option value="">All Leagues</option></select>
+  </div>
+
+  <div class="prediction-hero">
+    <div class="selector-grid">
+      <div class="team-select-group"><label class="team-label home">🏠 Home Team</label><select id="home-team" class="team-select home-select"><option value="" disabled>Select team…</option></select></div>
+      <div class="vs-badge">VS</div>
+      <div class="team-select-group"><label class="team-label away">✈️ Away Team</label><select id="away-team" class="team-select away-select"><option value="" disabled>Select team…</option></select></div>
+    </div>
+    <button id="predict-btn" class="predict-btn">🔮 PREDICT MATCH</button>
+  </div>
+
+  <p class="section-title">🎛️ Model Weights</p>
+  <div class="card full-col" style="margin-bottom:2rem">
+    <div class="weights-grid">
+      <div class="weight-control"><div class="weight-label"><span>📈 Recent Form</span><span id="w-val-form">0.28</span></div><input type="range" class="weight-slider" data-key="form" min="0" max="1" step="0.01" value="0.28" /></div>
+      <div class="weight-control"><div class="weight-label"><span>⚽ Attack Strength</span><span id="w-val-attack">0.18</span></div><input type="range" class="weight-slider" data-key="attack" min="0" max="1" step="0.01" value="0.18" /></div>
+      <div class="weight-control"><div class="weight-label"><span>🛡️ Defense Strength</span><span id="w-val-defense">0.16</span></div><input type="range" class="weight-slider" data-key="defense" min="0" max="1" step="0.01" value="0.16" /></div>
+      <div class="weight-control"><div class="weight-label"><span>🏟️ Home Advantage</span><span id="w-val-home">0.14</span></div><input type="range" class="weight-slider" data-key="home" min="0" max="1" step="0.01" value="0.14" /></div>
+      <div class="weight-control"><div class="weight-label"><span>📜 Head-to-Head</span><span id="w-val-h2h">0.12</span></div><input type="range" class="weight-slider" data-key="h2h" min="0" max="1" step="0.01" value="0.12" /></div>
+      <div class="weight-control"><div class="weight-label"><span>🏆 League Position</span><span id="w-val-position">0.08</span></div><input type="range" class="weight-slider" data-key="position" min="0" max="1" step="0.01" value="0.08" /></div>
+      <div class="weight-control"><div class="weight-label"><span>😓 Fatigue</span><span id="w-val-fatigue">0.04</span></div><input type="range" class="weight-slider" data-key="fatigue" min="0" max="1" step="0.01" value="0.04" /></div>
+    </div>
+  </div>
+
+  <div id="results-section">
+    <p class="section-title">🎯 Prediction Results</p>
+    <div class="card full-col" style="margin-bottom:1.5rem">
+      <div class="match-header"><span id="match-home-name" class="match-team-name home">—</span><span class="match-vs">vs</span><span id="match-away-name" class="match-team-name away">—</span></div>
+      <div style="text-align:center;margin-bottom:1.5rem"><span id="confidence-chip" class="confidence-chip medium">🟡 Confidence: Medium</span></div>
+      <div class="prob-badges">
+        <div class="prob-badge home"><div class="prob-badge-value" id="badge-home-val">—</div><div class="prob-badge-label">Home Win</div></div>
+        <div class="prob-badge draw"><div class="prob-badge-value" id="badge-draw-val">—</div><div class="prob-badge-label">Draw</div></div>
+        <div class="prob-badge away"><div class="prob-badge-value" id="badge-away-val">—</div><div class="prob-badge-label">Away Win</div></div>
+      </div>
+      <div class="prob-section">
+        <div class="prob-row"><span id="bar-label-home" class="prob-label">Home Win</span><div class="prob-bar-track"><div id="bar-home" class="prob-bar-fill home"></div></div><span id="val-home" class="prob-value home">—</span></div>
+        <div class="prob-row"><span class="prob-label">Draw</span><div class="prob-bar-track"><div id="bar-draw" class="prob-bar-fill draw"></div></div><span id="val-draw" class="prob-value draw">—</span></div>
+        <div class="prob-row"><span id="bar-label-away" class="prob-label">Away Win</span><div class="prob-bar-track"><div id="bar-away" class="prob-bar-fill away"></div></div><span id="val-away" class="prob-value away">—</span></div>
+      </div>
+    </div>
+    <p class="section-title">💡 Key Factors</p><div class="card full-col" style="margin-bottom:1.5rem"><div id="factors-list" class="factors-list"></div></div>
+    <p class="section-title">📊 Team Statistics</p><div class="two-col"><div class="card" id="home-stats-content"></div><div class="card" id="away-stats-content"></div></div>
+    <p class="section-title">🔬 Model Component Breakdown</p><div class="card full-col" style="margin-bottom:1.5rem"><div id="component-bars"></div></div>
+    <p class="section-title">⚔️ Head-to-Head History</p><div class="card full-col" style="margin-bottom:1.5rem"><div id="h2h-table-wrap"></div></div>
+  </div>
+</main>
+
+<script src="data.js"></script>
+<!-- Aquí asumo que guardaste el archivo grande que generamos antes -->
+<script src="progol_todo_integrado_abril2026.js"></script> 
+<script src="api.js"></script>
+<script src="model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
