@@ -1,4 +1,6 @@
-const IS_LOCAL = window.location.protocol === 'http:' || window.location.protocol === 'https:';
+
+// Ahora detecta correctamente si es localhost o GitHub Pages
+const IS_LOCAL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE = IS_LOCAL ? `${window.location.origin}/api` : 'https://free-api-live-football-data.p.rapidapi.com';
 
 const DIRECT_HEADERS = {

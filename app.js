@@ -90,7 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.weight-slider').forEach(s => s.addEventListener('input', () => document.getElementById(`w-val-${s.dataset.key}`).textContent = parseFloat(s.value).toFixed(2)));
   populateDropdowns(TEAMS); predictBtn.addEventListener('click', runPrediction);
   [homeSelect, awaySelect].forEach(sel => sel.addEventListener('change', () => { if (resultsSection.classList.contains('visible')) runPrediction(); }));
-  setTimeout(initProgolIntegration, 200);
+  // Ejecutar directamente sin esperar milisegundos arbitrarios
+initProgolIntegration();
 
   showStatus("🌐 Loading live data from API…", "info");
   try {
