@@ -1,3 +1,48 @@
+// ================================================================
+// 1. BASES DE DATOS PROGOL (INTEGRADAS PARA EVITAR ERRORES DE CARGA)
+// ================================================================
+const progol_ms_analisis = [
+    { "casillero": 1, "torneo": "Concacaf Champions Cup", "local": { "equipo": "Nashville SC", "liga": "MLS" }, "visitante": { "equipo": "Tigres UANL", "liga": "Liga MX" }, "pronostico_estadistico": "Local (L) o Empate (E)" },
+    { "casillero": 2, "torneo": "Amistoso", "local": { "equipo": "Los Angeles FC", "liga": "MLS" }, "visitante": { "equipo": "Toluca", "liga": "Liga MX" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 3, "torneo": "Champions League", "local": { "equipo": "Paris SG", "liga": "Ligue 1" }, "visitante": { "equipo": "Bayern Munich", "liga": "Bundesliga" }, "pronostico_estadistico": "Empate (E) o Visita (V)" },
+    { "casillero": 4, "torneo": "Competición Europea", "local": { "equipo": "Atlético de Madrid", "liga": "LaLiga" }, "visitante": { "equipo": "Arsenal", "liga": "Premier League" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 5, "torneo": "Competición Europea", "local": { "equipo": "SC Braga", "liga": "Primeira Liga" }, "visitante": { "equipo": "Friburgo", "liga": "Bundesliga" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 6, "torneo": "Premier League", "local": { "equipo": "Nottingham", "liga": "Premier League" }, "visitante": { "equipo": "Aston Villa", "liga": "Premier League" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 7, "torneo": "Amistoso", "local": { "equipo": "Rayo Vallecano", "liga": "LaLiga" }, "visitante": { "equipo": "Estrasburgo", "liga": "Ligue 1" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 8, "torneo": "Amistoso", "local": { "equipo": "Shakhtar", "liga": "Ucrania" }, "visitante": { "equipo": "Crystal Palace", "liga": "Premier League" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 9, "torneo": "Copa Sudamericana", "local": { "equipo": "Cruzeiro", "liga": "Brasileirão" }, "visitante": { "equipo": "Boca Juniors", "liga": "Argentina" }, "pronostico_estadistico": "Empate (E)" }
+];
+
+const progol_principal = [
+    { "casillero": 1, "torneo": "Liga MX", "local": { "equipo": "América" }, "visitante": { "equipo": "Pumas UNAM" }, "pronostico_estadistico": "Empate (E) o Visita (V)" },
+    { "casillero": 2, "torneo": "Liga MX", "local": { "equipo": "Tigres UANL" }, "visitante": { "equipo": "Guadalajara" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 3, "torneo": "Liga MX", "local": { "equipo": "Atlas" }, "visitante": { "equipo": "Cruz Azul" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 4, "torneo": "Liga MX", "local": { "equipo": "Toluca" }, "visitante": { "equipo": "Pachuca" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 5, "torneo": "Premier League", "local": { "equipo": "Newcastle" }, "visitante": { "equipo": "Brighton" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 6, "torneo": "Premier League", "local": { "equipo": "Man. United" }, "visitante": { "equipo": "Liverpool" }, "pronostico_estadistico": "Local (L) o Empate (E)" },
+    { "casillero": 7, "torneo": "Bundesliga", "local": { "equipo": "Hoffenheim" }, "visitante": { "equipo": "Stuttgart" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 8, "torneo": "Bundesliga", "local": { "equipo": "Leverkusen" }, "visitante": { "equipo": "Leipzig" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 9, "torneo": "Serie A", "local": { "equipo": "Como 1907" }, "visitante": { "equipo": "Napoli" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 10, "torneo": "Eredivisie", "local": { "equipo": "Ajax" }, "visitante": { "equipo": "PSV" }, "pronostico_estadistico": "Visita (V) o Empate (E)" },
+    { "casillero": 11, "torneo": "Primeira Liga", "local": { "equipo": "Rio Ave" }, "visitante": { "equipo": "Gil Vicente" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 12, "torneo": "MLS", "local": { "equipo": "Toronto FC" }, "visitante": { "equipo": "San Jose" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 13, "torneo": "Grecia", "local": { "equipo": "OFI Creta" }, "visitante": { "equipo": "Aris" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 14, "torneo": "Grecia", "local": { "equipo": "PAOK" }, "visitante": { "equipo": "Olympiacos" }, "pronostico_estadistico": "Local (L)" }
+];
+
+const progol_revancha = [
+    { "casillero": 1, "torneo": "LaLiga", "local": { "equipo": "Alavés" }, "visitante": { "equipo": "Athletic Bilbao" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 2, "torneo": "Bundesliga", "local": { "equipo": "Werder Bremen" }, "visitante": { "equipo": "Augsburgo" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 3, "torneo": "Bundesliga", "local": { "equipo": "Union Berlin" }, "visitante": { "equipo": "Colonia" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 4, "torneo": "Bundesliga", "local": { "equipo": "St. Pauli" }, "visitante": { "equipo": "Mainz 05" }, "pronostico_estadistico": "Empate (E)" },
+    { "casillero": 5, "torneo": "Serie A", "local": { "equipo": "Udinese" }, "visitante": { "equipo": "Torino" }, "pronostico_estadistico": "Visita (V)" },
+    { "casillero": 6, "torneo": "Eredivisie", "local": { "equipo": "AZ Alkmaar" }, "visitante": { "equipo": "Twente" }, "pronostico_estadistico": "Local (L)" },
+    { "casillero": 7, "torneo": "Brasileirão", "local": { "equipo": "Internacional" }, "visitante": { "equipo": "Fluminense" }, "pronostico_estadistico": "Visita (V) o Empate (E)" }
+];
+
+// ================================================================
+// 2. LÓGICA DE INTERFAZ Y PREDICCIÓN
+// ================================================================
 const homeSelect = document.getElementById('home-team'), awaySelect = document.getElementById('away-team');
 const predictBtn = document.getElementById('predict-btn'), resultsSection = document.getElementById('results-section');
 const statusBanner = document.getElementById('status-banner'), statusText = document.getElementById('status-text');
@@ -86,13 +131,18 @@ async function runPrediction() {
   resultsSection.scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
+// ================================================================
+// 3. INICIALIZACIÓN (AQUÍ DIBUJAMOS LOS PANELES)
+// ================================================================
 document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.weight-slider').forEach(s => s.addEventListener('input', () => document.getElementById(`w-val-${s.dataset.key}`).textContent = parseFloat(s.value).toFixed(2)));
-  populateDropdowns(TEAMS); predictBtn.addEventListener('click', runPrediction);
-  [homeSelect, awaySelect].forEach(sel => sel.addEventListener('change', () => { if (resultsSection.classList.contains('visible')) runPrediction(); }));
-  // Ejecutar directamente sin esperar milisegundos arbitrarios
-initProgolIntegration();
+  
+  // DIBUJAR PANELES DE PROGOL INMEDIATAMENTE
+  initProgolIntegration();
 
+  predictBtn.addEventListener('click', runPrediction);
+  [homeSelect, awaySelect].forEach(sel => sel.addEventListener('change', () => { if (resultsSection.classList.contains('visible')) runPrediction(); }));
+  
   showStatus("🌐 Loading live data from API…", "info");
   try {
     const live = await loadLiveData(LEAGUES_TO_LOAD, msg => showStatus("🌐 " + msg, "info"));
@@ -102,43 +152,34 @@ initProgolIntegration();
   } catch(e) { showStatus("⚠️ API unavailable — using local dataset", "warn"); setTimeout(hideStatus, 5000); }
 });
 
-// ================================================================
-// INTEGRACIÓN QUINIELA PROGOL MÚLTIPLE
-// ================================================================
 function initProgolIntegration() {
-  // Leer las variables que vienen de progol_ms_analisis_abril2026.js y progol_completo_abril2026.js
-  if (typeof progol_ms_analisis !== 'undefined') procesarYRenderizar(progol_ms_analisis, 'progol-grid-ms');
-  if (typeof progol_principal !== 'undefined') procesarYRenderizar(progol_principal, 'progol-grid-principal');
-  if (typeof progol_revancha !== 'undefined') procesarYRenderizar(progol_revancha, 'progol-grid-revancha');
-
-  // Actualizar los dropdowns con los equipos nuevos
+  procesarYRenderizar(progol_ms_analisis, 'progol-grid-ms');
+  procesarYRenderizar(progol_principal, 'progol-grid-principal');
+  procesarYRenderizar(progol_revancha, 'progol-grid-revancha');
   populateDropdowns(TEAMS);
 }
 
 function procesarYRenderizar(arrayDatos, containerId) {
-  // Inyectar datos al simulador predictivo
+  // Inyectar equipos a TEAMS para que el motor matemático los lea
   arrayDatos.forEach(match => {
     [match.local, match.visitante].forEach(t => {
       if (!TEAMS[t.equipo]) {
         const pj = 15, g = 6, e = 4, p = 5, gf = 18, gc = 15;
         TEAMS[t.equipo] = {
-          league: t.liga || "Progol", 
+          league: t.liga || match.torneo || "Progol", 
           position: t.posicion_actual || t.posicion || 10, 
           played: pj, won: g, drawn: e, lost: p, goalsFor: gf, goalsAgainst: gc,
           homeWon: 4, homeDrawn: 2, homeLost: 1, awayWon: 2, awayDrawn: 2, awayLost: 4,
-          lastFive: t.forma_reciente ? t.forma_reciente.map(x => x==='V'?'W':x==='E'?'D':'L') : ['W','D','L','W','D'],
+          lastFive: ['W','D','L','W','D'],
           xGFor: +(gf/pj * 0.93).toFixed(2), xGAgainst: +(gc/pj * 0.93).toFixed(2),
           shotsPerMatch: 11.5, shotsOnTargetPerMatch: 4.0, recentMatchDates: [0, 7, 14, 21, 28], cleanSheets: 4,
         };
-      } else { 
-        if (t.forma_reciente) TEAMS[t.equipo].lastFive = t.forma_reciente.map(x => x==='V'?'W':x==='E'?'D':'L'); 
-        if (t.liga) TEAMS[t.equipo].league = t.liga; 
       }
       TEAMS[t.equipo].progolData = t; 
     });
   });
 
-  // Renderizar las tarjetas
+  // Renderizar las tarjetas visuales
   const grid = document.getElementById(containerId);
   if (grid) {
     grid.innerHTML = arrayDatos.map(p => `
@@ -151,27 +192,10 @@ function procesarYRenderizar(arrayDatos, containerId) {
 }
 
 window.loadProgolMatch = function(homeTeam, awayTeam) {
+  leagueFilter.value = "";
+  leagueFilter.dispatchEvent(new Event('change'));
+
   homeSelect.value = homeTeam; 
   awaySelect.value = awayTeam; 
   runPrediction();
-
-  // Inyectar alertas dinámicas
-  setTimeout(() => {
-    const factorsList = document.getElementById('factors-list');
-    const hData = TEAMS[homeTeam].progolData;
-    const aData = TEAMS[awayTeam].progolData;
-    
-    const checkLesiones = (data, teamName) => {
-      if (data && data.lesiones_y_bajas && !data.lesiones_y_bajas.includes("Ninguna")) {
-        const factor = document.createElement('div'); 
-        factor.className = 'factor-item'; 
-        factor.style.borderLeftColor = 'var(--accent-red)';
-        factor.innerHTML = `🏥 <strong>Alertas en ${teamName}:</strong> ${data.lesiones_y_bajas.join(' / ')} (Jugador clave: ${data.jugador_clave || 'N/A'})`;
-        factorsList.prepend(factor);
-      }
-    };
-    
-    if (aData) checkLesiones(aData, awayTeam);
-    if (hData) checkLesiones(hData, homeTeam);
-  }, 100);
 };
