@@ -4,15 +4,39 @@ function calcFormScore(team) {
   const weights = [0.10, 0.15, 0.20, 0.25, 0.30], values = { W: 1.0, D: 0.4, L: 0.0 }; let score = 0;
   team.lastFive.forEach((r, i) => { score += values[r] * weights[i]; }); return score;
 }
-function calcAttackScore(team) { return Math.min(((team.goalsFor / team.played) * 0.5 + (team.xGFor || (team.goalsFor / team.played)) * 0.35 + ((team.shotsOnTargetPerMatch || 5) / 10) * 0.15) / 3.5, 1); }
-function calcDefenseScore(team) { return Math.max(0, 1 - (((team.goalsAgainst / team.played) * 0.55 + (team.xGAgainst || (team.goalsAgainst / team.played)) * 0.45) / 3.5)); }
-function calcHomeScore(team, isHome) { if (!isHome) return 0.25; const homeMatches = team.homeWon + team.homeDrawn + team.homeLost; return 0.35 + (homeMatches > 0 ? (team.homeWon + team.homeDrawn * 0.5) / homeMatches : 0.5) * 0.65; }
-function calcH2HScore(homeTeam, awayTeam, forHome) {
-  let entry = H2H[`${homeTeam}_${awayTeam}`] || H2H[`${awayTeam}_${homeTeam}`];
-  if (!entry) return 0.5; let [hw, d, aw] = entry; if (H2H[`${awayTeam}_${homeTeam}`] && !H2H[`${homeTeam}_${awayTeam}`]) [hw, aw] = [aw, hw];
-  const total = hw + d + aw; return total === 0 ? 0.5 : (forHome ? (hw + d * 0.4) / total : (aw + d * 0.4) / total);
+
+function calcAttackScore(team) { 
+    return Math.min(((team.goalsFor / team.played) * 0.5 + (team.xGFor || (team.goalsFor / team.played)) * 0.35 + ((team.shotsOnTargetPerMatch || 5) / 10) * 0.15) / 3.5, 1); 
 }
-function calcPositionScore(team) { return Math.max(0, 1 - (team.position - 1) / 19); }
+
+function calcDefenseScore(team) { 
+    return Math.max(0, 1 - (((team.goalsAgainst / team.played) * 0.55 + (team.xGAgainst || (team.goalsAgainst / team.played)) * 0.45) / 3.5)); 
+}
+
+function calcHomeScore(team, isHome) { 
+    if (!isHome) return 0.25; 
+    const homeMatches = team.homeWon + team.homeDrawn + team.homeLost; 
+    return 0.35 + (homeMatches > 0 ? (team.homeWon + team.homeDrawn * 0.5) / homeMatches : 0.5) * 0.65; 
+}
+
+// VERSIÓN CORREGIDA: A prueba de fallos si H2H no está definido
+function calcH2HScore(homeTeam, awayTeam, forHome) {
+  const baseH2H = (typeof H2H !== 'undefined') ? H2H : {};
+  let entry = baseH2H[`${homeTeam}_${awayTeam}`] || baseH2H[`${awayTeam}_${homeTeam}`];
+  
+  if (!entry) return 0.5; 
+  
+  let [hw, d, aw] = entry; 
+  if (baseH2H[`${awayTeam}_${homeTeam}`] && !baseH2H[`${homeTeam}_${awayTeam}`]) [hw, aw] = [aw, hw];
+  
+  const total = hw + d + aw; 
+  return total === 0 ? 0.5 : (forHome ? (hw + d * 0.4) / total : (aw + d * 0.4) / total);
+}
+
+function calcPositionScore(team) { 
+    return Math.max(0, 1 - (team.position - 1) / 19); 
+}
+
 function calcFatigueScore(team) {
   const dates = team.recentMatchDates || [0,7,14,21,28], gaps = [];
   for (let i = 1; i < dates.length; i++) gaps.push(dates[i] - dates[i-1]);
